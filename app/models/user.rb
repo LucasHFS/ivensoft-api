@@ -7,6 +7,8 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :jwt_authenticatable, jwt_revocation_strategy: self
 
+  has_many :organization_users, dependent: :destroy
+  has_many :organizations, through: :organization_users
 
   def generate_jwt
     Warden::JWTAuth::UserEncoder
