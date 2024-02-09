@@ -6,5 +6,9 @@ FactoryBot.define do
     password { Faker::Internet.password }
     full_name { Faker::Name.name }
     avatar_url { 'http://www.gravatar.com/avatar/?d=mp' }
+
+    after(:build) do |user|
+      user.organizations << build(:organization)
+    end
   end
 end

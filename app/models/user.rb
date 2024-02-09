@@ -16,4 +16,8 @@ class User < ApplicationRecord
       .call(self, :user, nil)
       .first
   end
+
+  def organization
+    organizations.first
+  end
 end

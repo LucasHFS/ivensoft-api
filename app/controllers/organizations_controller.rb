@@ -9,7 +9,7 @@ class OrganizationsController < ApplicationController
       render json: {}, status: :created
     else
       render json: {
-        error: { message: 'Erro de validação', details: @organization.errors.full_messages }
+        errors: @organization.errors.full_messages
       }, status: :unprocessable_entity
     end
   end

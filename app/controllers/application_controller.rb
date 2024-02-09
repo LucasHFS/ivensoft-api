@@ -4,6 +4,10 @@ class ApplicationController < ActionController::API
   respond_to :json
   include ActionController::MimeResponds
 
+  def current_organization
+    current_user.organization
+  end
+
   rescue_from ActionController::ParameterMissing, with: :missing_parameters
   rescue_from ActiveRecord::RecordInvalid, with: :record_invalid
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
@@ -12,25 +16,20 @@ class ApplicationController < ActionController::API
   def missing_parameters(exception)
     respond_with_error(
       status: :unprocessable_entity,
-      type: 'BadRequest',
-      message: 'Missing parameters',
-      details: [exception.message]
+      message: exception.message
     )
   end
 
   def record_invalid(exception)
     respond_with_error(
       status: :conflict,
-      type: 'ValidationError',
-      message: 'Validation error',
-      details: exception.record.errors.full_messages
+      message: exception.record.errors.full_messages
     )
   end
 
   def record_not_found
     respond_with_error(
       status: :not_found,
-      type: 'NotFoundError',
       message: 'Recurso não encontrado'
     )
   end
@@ -38,13 +37,12 @@ class ApplicationController < ActionController::API
   def invalid_foreign_key
     respond_with_error(
       status: :unprocessable_entity,
-      type: 'BadRequest',
       message: 'Erro de exclusão'
     )
   end
 
-  def respond_with_error(status:, type:, message:, details: nil)
-    response = { error: { type:, message:, details: }.compact }
+  def respond_with_error(status:, message:)
+    response = { errors: [message].flatten }
     render json: response, status:
   end
 end
