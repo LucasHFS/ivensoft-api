@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Model < ApplicationRecord
   belongs_to :organization
   belongs_to :make

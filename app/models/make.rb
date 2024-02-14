@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Make < ApplicationRecord
   belongs_to :organization
   has_many :models, dependent: :destroy
