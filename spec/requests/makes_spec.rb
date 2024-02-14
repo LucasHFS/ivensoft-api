@@ -4,9 +4,9 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Categories' do
+RSpec.describe 'Makes' do
   describe 'GET /index' do
-    subject(:request) { get '/api/categories', params: {}, headers: }
+    subject(:request) { get '/api/makes', params: {}, headers: }
 
     let(:json_body) do
       JSON.parse(response.body, symbolize_names: true)
@@ -15,8 +15,8 @@ RSpec.describe 'Categories' do
     let(:user) { create(:user) }
 
     before do
-      create_list(:category, 5, organization: user.organization)
-      create_list(:category, 3)
+      create_list(:make, 5, organization: user.organization)
+      create_list(:make, 3)
     end
 
     context 'when not logged in' do
@@ -40,15 +40,15 @@ RSpec.describe 'Categories' do
         expect(response).to have_http_status(:success)
       end
 
-      it "lists all user's categories" do
+      it "lists all user's makes" do
         request
-        expect(json_body[:categories].length).to eq(5)
+        expect(json_body[:makes].length).to eq(5)
       end
     end
   end
 
   describe 'POST /create' do
-    subject(:request) { post '/api/categories', params:, headers: }
+    subject(:request) { post '/api/makes', params:, headers: }
 
     let(:json_body) do
       JSON.parse(response.body, symbolize_names: true)
@@ -58,9 +58,8 @@ RSpec.describe 'Categories' do
 
     let(:params) do
       {
-        category: {
-          name: 'category a',
-          description: 'description a'
+        make: {
+          name: 'make a'
         }
       }
     end
@@ -87,15 +86,14 @@ RSpec.describe 'Categories' do
           expect(response).to have_http_status(:created)
         end
 
-        it 'creates the category on the db' do
+        it 'creates the make on the db' do
           request
 
           expect(JSON.parse(response.body).with_indifferent_access).to match(
             {
-              category: {
+              make: {
                 id: Integer,
-                name: 'category a',
-                description: 'description a'
+                name: 'make a'
               }
             }.with_indifferent_access
           )
@@ -105,7 +103,7 @@ RSpec.describe 'Categories' do
       context 'when validation fails' do
         let(:params) do
           {
-            category: {
+            make: {
               name: nil
             }
           }
@@ -130,20 +128,19 @@ RSpec.describe 'Categories' do
   end
 
   describe 'PUT /update' do
-    subject(:request) { put "/api/categories/#{category.id}", params:, headers: }
+    subject(:request) { put "/api/makes/#{make.id}", params:, headers: }
 
     let(:json_body) do
       JSON.parse(response.body, symbolize_names: true)
     end
 
     let(:user) { create(:user) }
-    let(:category) { create(:category, organization: user.organization) }
+    let(:make) { create(:make, organization: user.organization) }
 
     let(:params) do
       {
-        category: {
-          name: 'category b',
-          description: 'description b'
+        make: {
+          name: 'make b'
         }
       }
     end
@@ -170,15 +167,14 @@ RSpec.describe 'Categories' do
           expect(response).to have_http_status(:ok)
         end
 
-        it 'updates the category on the db' do
+        it 'updates the make on the db' do
           request
 
-          updated_category = Category.last.attributes.transform_keys(&:to_sym)
+          updated_make = Make.last.attributes.transform_keys(&:to_sym)
 
-          expect(updated_category).to include(
+          expect(updated_make).to include(
             {
-              name: 'category b',
-              description: 'description b'
+              name: 'make b'
             }
           )
         end
@@ -187,7 +183,7 @@ RSpec.describe 'Categories' do
       context 'when validation fails' do
         let(:params) do
           {
-            category: {
+            make: {
               name: nil
             }
           }
@@ -212,15 +208,15 @@ RSpec.describe 'Categories' do
   end
 
   describe 'DELETE /delete' do
-    subject(:request) { delete "/api/categories/#{category_id}", params: {}, headers: }
+    subject(:request) { delete "/api/makes/#{make_id}", params: {}, headers: }
 
     let(:json_body) do
       JSON.parse(response.body, symbolize_names: true)
     end
 
     let(:user) { create(:user) }
-    let!(:category) { create(:category, name: 'category to delete', organization: user.organization) }
-    let(:category_id) { category.id }
+    let!(:make) { create(:make, name: 'make to delete', organization: user.organization) }
+    let(:make_id) { make.id }
 
     context 'when not logged in' do
       let(:headers) do
@@ -244,15 +240,15 @@ RSpec.describe 'Categories' do
           expect(response).to have_http_status(:no_content)
         end
 
-        it 'deletes the category on the db' do
+        it 'deletes the make from the db' do
           request
 
-          expect(Category.find_by(name: 'category to delete')).to be_nil
+          expect(Make.find_by(name: 'make to delete')).to be_nil
         end
       end
 
       # context 'when validation fails' do
-      #   let!(:product) { create(:product, category:) }
+      #   let!(:product) { create(:product, make:) }
 
       #   it 'is returns :unprocessable_entity status' do
       #     request
@@ -274,7 +270,7 @@ RSpec.describe 'Categories' do
       # end
 
       context 'when not found' do
-        subject(:request) { delete '/api/categories/non-existing', params: {}, headers: }
+        subject(:request) { delete '/api/makes/non-existing', params: {}, headers: }
 
         it 'is returns :unprocessable_entity status' do
           request

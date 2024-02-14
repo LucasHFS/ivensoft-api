@@ -5,6 +5,12 @@ pt-BR:
       category:
         name: Nome
         description: Descrição
+      make:
+        name: Nome
+      model:
+        name: Nome
+      product:
+        name: Nome
     errors:
       messages:
         record_invalid: 'A validação falhou: %{errors}'

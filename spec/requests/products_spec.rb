@@ -4,9 +4,9 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Categories' do
+RSpec.describe 'Products' do
   describe 'GET /index' do
-    subject(:request) { get '/api/categories', params: {}, headers: }
+    subject(:request) { get '/api/products', params: {}, headers: }
 
     let(:json_body) do
       JSON.parse(response.body, symbolize_names: true)
@@ -15,8 +15,8 @@ RSpec.describe 'Categories' do
     let(:user) { create(:user) }
 
     before do
-      create_list(:category, 5, organization: user.organization)
-      create_list(:category, 3)
+      create_list(:product, 5, organization: user.organization)
+      create_list(:product, 3)
     end
 
     context 'when not logged in' do
@@ -40,27 +40,35 @@ RSpec.describe 'Categories' do
         expect(response).to have_http_status(:success)
       end
 
-      it "lists all user's categories" do
+      it "lists all user's products" do
         request
-        expect(json_body[:categories].length).to eq(5)
+        expect(json_body[:products].length).to eq(5)
       end
     end
   end
 
   describe 'POST /create' do
-    subject(:request) { post '/api/categories', params:, headers: }
+    subject(:request) { post '/api/products', params:, headers: }
 
     let(:json_body) do
       JSON.parse(response.body, symbolize_names: true)
     end
 
     let(:user) { create(:user) }
+    let(:model) { create(:model) }
+    let(:category) { create(:category) }
 
     let(:params) do
       {
-        category: {
-          name: 'category a',
-          description: 'description a'
+        product: {
+          name: 'product a',
+          sku: 'product-a-sku',
+          model_id: model.id,
+          category_id: category.id,
+          sale_price_in_cents: 15.7,
+          hide_on_sale: false,
+          visible_on_catalog: false,
+          comments: 'comments about product a'
         }
       }
     end
@@ -87,15 +95,21 @@ RSpec.describe 'Categories' do
           expect(response).to have_http_status(:created)
         end
 
-        it 'creates the category on the db' do
+        it 'creates the product on the db' do
           request
 
           expect(JSON.parse(response.body).with_indifferent_access).to match(
             {
-              category: {
+              product: {
                 id: Integer,
-                name: 'category a',
-                description: 'description a'
+                name: 'product a',
+                sku: 'product-a-sku',
+                model_id: model.id,
+                category_id: category.id,
+                sale_price: 15.7,
+                hide_on_sale: false,
+                visible_on_catalog: false,
+                comments: 'comments about product a'
               }
             }.with_indifferent_access
           )
@@ -105,8 +119,12 @@ RSpec.describe 'Categories' do
       context 'when validation fails' do
         let(:params) do
           {
-            category: {
-              name: nil
+            product: {
+              sku: 'product-a-sku',
+              model_id: model.id,
+              category_id: category.id,
+              sale_price_in_cents: 15.7,
+              comments: 'comments about product a'
             }
           }
         end
@@ -130,20 +148,19 @@ RSpec.describe 'Categories' do
   end
 
   describe 'PUT /update' do
-    subject(:request) { put "/api/categories/#{category.id}", params:, headers: }
+    subject(:request) { put "/api/products/#{product.id}", params:, headers: }
 
     let(:json_body) do
       JSON.parse(response.body, symbolize_names: true)
     end
 
     let(:user) { create(:user) }
-    let(:category) { create(:category, organization: user.organization) }
+    let(:product) { create(:product, organization: user.organization) }
 
     let(:params) do
       {
-        category: {
-          name: 'category b',
-          description: 'description b'
+        product: {
+          name: 'product b'
         }
       }
     end
@@ -170,15 +187,14 @@ RSpec.describe 'Categories' do
           expect(response).to have_http_status(:ok)
         end
 
-        it 'updates the category on the db' do
+        it 'updates the product on the db' do
           request
 
-          updated_category = Category.last.attributes.transform_keys(&:to_sym)
+          updated_product = Product.last.attributes.transform_keys(&:to_sym)
 
-          expect(updated_category).to include(
+          expect(updated_product).to include(
             {
-              name: 'category b',
-              description: 'description b'
+              name: 'product b'
             }
           )
         end
@@ -187,7 +203,7 @@ RSpec.describe 'Categories' do
       context 'when validation fails' do
         let(:params) do
           {
-            category: {
+            product: {
               name: nil
             }
           }
@@ -212,15 +228,15 @@ RSpec.describe 'Categories' do
   end
 
   describe 'DELETE /delete' do
-    subject(:request) { delete "/api/categories/#{category_id}", params: {}, headers: }
+    subject(:request) { delete "/api/products/#{product_id}", params: {}, headers: }
 
     let(:json_body) do
       JSON.parse(response.body, symbolize_names: true)
     end
 
     let(:user) { create(:user) }
-    let!(:category) { create(:category, name: 'category to delete', organization: user.organization) }
-    let(:category_id) { category.id }
+    let!(:product) { create(:product, name: 'product to delete', organization: user.organization) }
+    let(:product_id) { product.id }
 
     context 'when not logged in' do
       let(:headers) do
@@ -244,15 +260,15 @@ RSpec.describe 'Categories' do
           expect(response).to have_http_status(:no_content)
         end
 
-        it 'deletes the category on the db' do
+        it 'deletes the product from the db' do
           request
 
-          expect(Category.find_by(name: 'category to delete')).to be_nil
+          expect(Product.find_by(name: 'product to delete')).to be_nil
         end
       end
 
       # context 'when validation fails' do
-      #   let!(:product) { create(:product, category:) }
+      #   let!(:product) { create(:product, product:) }
 
       #   it 'is returns :unprocessable_entity status' do
       #     request
@@ -274,7 +290,7 @@ RSpec.describe 'Categories' do
       # end
 
       context 'when not found' do
-        subject(:request) { delete '/api/categories/non-existing', params: {}, headers: }
+        subject(:request) { delete '/api/products/non-existing', params: {}, headers: }
 
         it 'is returns :unprocessable_entity status' do
           request
