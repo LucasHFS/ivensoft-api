@@ -1,3 +1,9 @@
 # frozen_string_literal: true
 
-json.call(product, :id, :name, :sku, :model_id, :category_id, :sale_price, :hide_on_sale, :visible_on_catalog, :comments)
+json.call(product, :id, :name, :sku, :comments)
+json.modelId product.model_id
+json.makeId product.model.make_id
+json.categoryId product.category_id
+json.salePrice product.sale_price
+json.hideOnSale product.hide_on_sale
+json.visibleOnCatalog product.visible_on_catalog

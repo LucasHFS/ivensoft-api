@@ -44,6 +44,7 @@ gem 'devise', '~> 4.8'
 gem 'devise-jwt', '~> 0.10.0'
 gem 'jbuilder', '~> 2.11'
 gem 'pry', '~> 0.14.2'
+gem 'pry-remote', '~> 0.1.8'
 gem 'state_machine', '~> 1.2'
 
 gem 'dotenv-rails', '~> 2.8'

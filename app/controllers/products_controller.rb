@@ -48,7 +48,7 @@ class ProductsController < ApplicationController
       :sku,
       :model_id,
       :category_id,
-      :sale_price_in_cents,
+      :sale_price,
       :hide_on_sale,
       :visible_on_catalog,
       :comments
@@ -56,9 +56,9 @@ class ProductsController < ApplicationController
   end
 
   def product_attributes
-    product_params.merge(
+    product_params.except(:sale_price).merge(
       organization_id: current_organization.id,
-      sale_price_in_cents: (product_params[:sale_price_in_cents].to_f * 100).to_i
+      sale_price_in_cents: (product_params[:sale_price].to_f * 100).to_i
     )
   end
 end
