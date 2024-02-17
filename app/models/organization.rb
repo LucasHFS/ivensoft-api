@@ -6,6 +6,7 @@ class Organization < ApplicationRecord
   has_many :categories, dependent: :destroy
   has_many :makes, dependent: :destroy
   has_many :products, dependent: :destroy
+  has_many :deposits, dependent: :destroy
 
   validates :name, presence: true
 end

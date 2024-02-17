@@ -7,6 +7,8 @@ pt-BR:
         description: Descrição
       make:
         name: Nome
+      deposit:
+        name: Nome
       model:
         name: Nome
       product:

@@ -7,6 +7,8 @@ Rails.application.routes.draw do
 
     resources :organizations, only: %i[create show]
     resources :categories, only: %i[create index show update destroy]
+    resources :deposits, only: %i[create index show update destroy]
+
     resources :makes, only: %i[create index show update destroy] do
       resources :models, only: %i[create index show update destroy]
     end
