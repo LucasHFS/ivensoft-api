@@ -2,10 +2,9 @@
 
 FactoryBot.define do
   factory :deposit_product do
-    quantity { 1 }
+    quantity { Faker::Number.number(digits: 3) }
 
-    product
     deposit
-    organization
+    product
   end
 end

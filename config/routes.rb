@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     resources :categories, only: %i[create index show update destroy]
     resources :deposits, only: %i[create index show update destroy]
     resources :transactions, only: %i[create index show]
+    resources :stock, only: %i[index]
 
     resources :makes, only: %i[create index show update destroy] do
       resources :models, only: %i[create index show update destroy]

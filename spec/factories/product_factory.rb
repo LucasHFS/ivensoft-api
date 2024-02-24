@@ -12,8 +12,10 @@ FactoryBot.define do
     model
     category
 
-    after(:create) do |product|
-      product.deposit_products.create(deposit: product.organization.default_deposit)
+    trait :with_deposit_products do
+      after(:create) do |product|
+        product.deposit_products.create(deposit: product.organization.default_deposit)
+      end
     end
   end
 end

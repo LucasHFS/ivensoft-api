@@ -16,7 +16,7 @@ RSpec.describe 'Products' do
     let(:user) { create(:user, organization:) }
 
     before do
-      create_list(:product, 5, organization:)
+      create_list(:product, 5, :with_deposit_products, organization:)
       create_list(:product, 3)
     end
 
@@ -170,7 +170,7 @@ RSpec.describe 'Products' do
     let(:organization) { create(:organization) }
     let(:user) { create(:user, organization:) }
 
-    let(:product) { create(:product, organization:) }
+    let(:product) { create(:product, :with_deposit_products, organization:) }
 
     let(:params) do
       {
@@ -251,7 +251,7 @@ RSpec.describe 'Products' do
 
     let(:organization) { create(:organization) }
     let(:user) { create(:user, organization:) }
-    let!(:product) { create(:product, name: 'product to delete', organization:) }
+    let!(:product) { create(:product, :with_deposit_products, name: 'product to delete', organization:) }
     let(:product_id) { product.id }
 
     context 'when not logged in' do

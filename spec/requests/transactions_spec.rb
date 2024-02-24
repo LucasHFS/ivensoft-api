@@ -14,10 +14,10 @@ RSpec.describe 'Transactions' do
 
     let(:organization) { create(:organization) }
     let(:user) { create(:user, organization:) }
-    let(:product) { create(:product, organization:) }
+    let(:product) { create(:product, :with_deposit_products, organization:) }
 
     let(:organization2) { create(:organization) }
-    let(:product2) { create(:product, organization: organization2) }
+    let(:product2) { create(:product, :with_deposit_products, organization: organization2) }
 
     before do
       create_list(:transaction, 5, organization:, product:, deposit: organization.default_deposit)
@@ -62,8 +62,8 @@ RSpec.describe 'Transactions' do
     let(:organization) { create(:organization) }
     let(:user) { create(:user, organization:) }
 
-    let(:product1) { create(:product, organization:) }
-    let(:product2) { create(:product, organization:) }
+    let(:product1) { create(:product, :with_deposit_products, organization:) }
+    let(:product2) { create(:product, :with_deposit_products, organization:) }
 
     let(:params) do
       {
