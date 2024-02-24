@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_17_162704) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_17_173503) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -28,11 +28,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_17_162704) do
     t.integer "quantity", default: 0
     t.bigint "product_id", null: false
     t.bigint "deposit_id", null: false
-    t.bigint "organization_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["deposit_id"], name: "index_deposit_products_on_deposit_id"
-    t.index ["organization_id"], name: "index_deposit_products_on_organization_id"
     t.index ["product_id"], name: "index_deposit_products_on_product_id"
   end
 
@@ -95,6 +93,20 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_17_162704) do
     t.index ["model_id"], name: "index_products_on_model_id"
     t.index ["organization_id", "sku"], name: "index_products_on_organization_id_and_sku", unique: true
     t.index ["organization_id"], name: "index_products_on_organization_id"
+  end
+
+  create_table "transactions", force: :cascade do |t|
+    t.integer "transaction_type", default: 0
+    t.integer "quantity"
+    t.datetime "transactioned_at"
+    t.bigint "deposit_id", null: false
+    t.bigint "organization_id", null: false
+    t.bigint "product_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deposit_id"], name: "index_transactions_on_deposit_id"
+    t.index ["organization_id"], name: "index_transactions_on_organization_id"
+    t.index ["product_id"], name: "index_transactions_on_product_id"
   end
 
   create_table "users", force: :cascade do |t|

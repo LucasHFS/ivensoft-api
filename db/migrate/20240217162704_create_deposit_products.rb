@@ -7,7 +7,6 @@ class CreateDepositProducts < ActiveRecord::Migration[7.0]
 
       t.belongs_to :product, null: false
       t.belongs_to :deposit, null: false
-      t.belongs_to :organization, null: false
 
       t.timestamps
     end

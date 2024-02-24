@@ -3,5 +3,9 @@
 FactoryBot.define do
   factory :organization do
     name { Faker::Company.name }
+
+    after(:create) do |organization|
+      create(:deposit, organization:)
+    end
   end
 end

@@ -39,7 +39,7 @@ class ModelsController < ApplicationController
       render json: {}, status: :no_content
     else
       render json: {
-        errors: ['Não foi possivel excluir a categoria']
+        errors: ['Não foi possivel excluir o modelo.']
       }, status: :unprocessable_entity
     end
   end

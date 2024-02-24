@@ -12,10 +12,11 @@ RSpec.describe 'Products' do
       JSON.parse(response.body, symbolize_names: true)
     end
 
-    let(:user) { create(:user) }
+    let(:organization) { create(:organization) }
+    let(:user) { create(:user, organization:) }
 
     before do
-      create_list(:product, 5, organization: user.organization)
+      create_list(:product, 5, organization:)
       create_list(:product, 3)
     end
 
@@ -54,9 +55,11 @@ RSpec.describe 'Products' do
       JSON.parse(response.body, symbolize_names: true)
     end
 
-    let(:user) { create(:user) }
+    let(:organization) { create(:organization) }
+    let(:user) { create(:user, organization:) }
+
     let(:model) { create(:model) }
-    let(:category) { create(:category) }
+    let(:category) { create(:category, organization:) }
 
     let(:params) do
       {
@@ -65,7 +68,7 @@ RSpec.describe 'Products' do
           sku: 'product-a-sku',
           model_id: model.id,
           category_id: category.id,
-          sale_price_in_cents: 15.7,
+          sale_price: 15.7,
           hide_on_sale: false,
           visible_on_catalog: false,
           comments: 'comments about product a'
@@ -104,15 +107,25 @@ RSpec.describe 'Products' do
                 id: Integer,
                 name: 'product a',
                 sku: 'product-a-sku',
-                model_id: model.id,
-                category_id: category.id,
-                sale_price: 15.7,
-                hide_on_sale: false,
-                visible_on_catalog: false,
+                makeId: model.make.id,
+                modelId: model.id,
+                categoryId: category.id,
+                salePrice: 15.7,
+                hideOnSale: false,
+                visibleOnCatalog: false,
                 comments: 'comments about product a'
               }
             }.with_indifferent_access
           )
+        end
+
+        it 'creates a deposit_product' do
+          request
+
+          product = Product.last
+          deposit_product = product.deposit_products.last
+
+          expect(deposit_product.deposit).to eq(user.organization.default_deposit)
         end
       end
 
@@ -154,8 +167,10 @@ RSpec.describe 'Products' do
       JSON.parse(response.body, symbolize_names: true)
     end
 
-    let(:user) { create(:user) }
-    let(:product) { create(:product, organization: user.organization) }
+    let(:organization) { create(:organization) }
+    let(:user) { create(:user, organization:) }
+
+    let(:product) { create(:product, organization:) }
 
     let(:params) do
       {
@@ -234,8 +249,9 @@ RSpec.describe 'Products' do
       JSON.parse(response.body, symbolize_names: true)
     end
 
-    let(:user) { create(:user) }
-    let!(:product) { create(:product, name: 'product to delete', organization: user.organization) }
+    let(:organization) { create(:organization) }
+    let(:user) { create(:user, organization:) }
+    let!(:product) { create(:product, name: 'product to delete', organization:) }
     let(:product_id) { product.id }
 
     context 'when not logged in' do

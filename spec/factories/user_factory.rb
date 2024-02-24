@@ -7,8 +7,12 @@ FactoryBot.define do
     full_name { Faker::Name.name }
     avatar_url { 'http://www.gravatar.com/avatar/?d=mp' }
 
-    after(:build) do |user|
-      user.organizations << build(:organization)
+    transient do
+      organization { nil }
+    end
+
+    after(:create) do |user, evaluator|
+      user.organizations << (evaluator.organization || build(:organization))
     end
   end
 end

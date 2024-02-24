@@ -11,5 +11,9 @@ FactoryBot.define do
     organization
     model
     category
+
+    after(:create) do |product|
+      product.deposit_products.create(deposit: product.organization.default_deposit)
+    end
   end
 end

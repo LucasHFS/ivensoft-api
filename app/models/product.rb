@@ -11,7 +11,15 @@ class Product < ApplicationRecord
   has_many :deposit_products, dependent: :destroy
   has_many :deposits, through: :deposit_products
 
+  after_create :create_deposit_product!
+
   def sale_price
     sale_price_in_cents.to_f / 100.0
+  end
+
+  private
+
+  def create_deposit_product!
+    organization.default_deposit.deposit_products.create!(product: self)
   end
 end
