@@ -2,11 +2,16 @@
 
 class ModelsController < ApplicationController
   before_action :authenticate_user!
-  before_action :find_make!, only: %i[index create update destroy]
+  before_action :find_make!, only: %i[create update destroy]
   before_action :find_model!, only: %i[show update destroy]
 
   def index
-    @models = @make.models.order(:name)
+    if params[:make_id].present?
+      @make = current_organization.makes.find(params[:make_id])
+      @models = @make.models.order(:name)
+    else
+      @models = current_organization.models.order(:name)
+    end
   end
 
   def show; end

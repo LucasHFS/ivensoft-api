@@ -10,6 +10,7 @@ class Product < ApplicationRecord
 
   has_many :deposit_products, dependent: :destroy
   has_many :deposits, through: :deposit_products
+  has_many :vehicle_products, dependent: :destroy
 
   after_create :create_deposit_product!
 
